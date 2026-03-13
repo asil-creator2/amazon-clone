@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { Link } from "react-router"
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { getAuth, createUserWithEmailAndPassword, updateProfile ,GoogleAuthProvider, signInWithPopup} from "firebase/auth"
 import app from "../firebase/firebase"
+import { FcGoogle } from "react-icons/fc"
 
+const provider = new GoogleAuthProvider();
 const auth = getAuth(app)
 
 const SignUp = () => {
@@ -37,6 +39,17 @@ const SignUp = () => {
       console.log(error.message);
     }
   }
+  const handleGoogleSignIn = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        window.location.href = '/';
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
@@ -101,7 +114,17 @@ const SignUp = () => {
         >
           Continue
         </button>
-
+        <button
+          onClick={handleGoogleSignIn}
+          className="flex items-center justify-center gap-3 w-full max-w-sm 
+          bg-white border border-gray-300 rounded-lg 
+          px-6 py-3 font-medium text-gray-700
+          shadow-sm transition-all duration-200
+          hover:shadow-md hover:bg-gray-50 active:scale-[0.98]"
+        >
+          <FcGoogle size={22} />
+          Sign in with Google
+        </button>
         <p className="text-xs mt-4">
           Already have an account?{" "}
           <Link to="/signin" className="text-blue-500">
