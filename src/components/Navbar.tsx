@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { setCategory, setSearchQuery } from "../Redux/slices/searchSlice"
 import type {RootState} from '../Redux/store'
 import { getAuth, onAuthStateChanged } from "firebase/auth"
-import type { User } from "firebase/auth"
 
 const Navbar = () => {
 const [name, setName] = useState("Sign In")
