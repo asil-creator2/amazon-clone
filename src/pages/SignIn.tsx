@@ -1,9 +1,12 @@
 import { useState } from "react"
 import { Link } from "react-router"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { getAuth, signInWithEmailAndPassword,GoogleAuthProvider, signInWithPopup} from "firebase/auth"
+import { FcGoogle } from "react-icons/fc"
+
 import app from "../firebase/firebase"
 
 const auth = getAuth(app)
+const provider = new GoogleAuthProvider();
 
 const SignIn = () => {
     const [email,setEmail] =useState<string>("")
@@ -22,6 +25,17 @@ const SignIn = () => {
           console.log(error.message)
         })
     }
+      const handleGoogleSignIn = () => {
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            const user = result.user;
+            console.log(user);
+            window.location.href = '/';
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100">
 
@@ -54,7 +68,17 @@ const SignIn = () => {
         <button className="w-full bg-yellow-400 hover:bg-yellow-500 p-2 rounded" onClick={() => {handleSubmit()} }>
           Continue
         </button>
-
+        <button
+      onClick={handleGoogleSignIn}
+      className="flex items-center justify-center gap-3 w-full max-w-sm 
+      bg-white border border-gray-300 rounded-lg 
+      px-6 py-3 font-medium text-gray-700
+      shadow-sm transition-all duration-200
+      hover:shadow-md hover:bg-gray-50 active:scale-[0.98]"
+    >
+      <FcGoogle size={22} />
+      Sign in with Google
+    </button>
         <p className="text-xs mt-4">
           By Continuing, you agree to Amazon's Conditions of Use
           and Privacy Notice.
