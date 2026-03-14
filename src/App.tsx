@@ -12,8 +12,8 @@ import Home from "./pages/Home"
 import Cart from "./pages/Cart"
 import Error404 from "./pages/Error404"
 import Favorites from "./pages/Favorites"
-import SignIn from "./pages/SignIn"
-import SignUp from "./pages/SignUp"
+import SignIn from "./auth/SignIn"
+import SignUp from "./auth/SignUp"
 import UserPage from "./pages/User"
 
 const Layout = () => {

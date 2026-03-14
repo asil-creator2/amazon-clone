@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
 import type { User } from "firebase/auth"
 
@@ -15,64 +16,121 @@ const getInitials = (name: string | null) => {
   return initials
 }
 
-
 const UserPage = () => {
 
-  const [user,setUser] = useState<User | null>(null)
-    const initials = getInitials(user?.displayName || "")
+  const [user, setUser] = useState<User | null>(null)
   const auth = getAuth()
 
-  useEffect(()=>{
+  const initials = getInitials(user?.displayName || "")
 
-    const unsubscribe = onAuthStateChanged(auth,(currentUser)=>{
+  useEffect(() => {
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
     })
 
     return () => unsubscribe()
 
-  },[])
+  }, [])
 
-  const handleLogout = async () => {
+const handleLogout = async () => {
+
+  const result = await Swal.fire({
+    title: "Logout?",
+    text: "Are you sure you want to logout?",
+    icon: "warning",
+
+    background: "#0f172a", // slate-900
+    color: "#ffffff",
+
+    showCancelButton: true,
+
+    confirmButtonText: "Yes, logout",
+    cancelButtonText: "Cancel",
+
+    confirmButtonColor: "#dc2626", // red
+    cancelButtonColor: "#4f46e5", // indigo
+
+    customClass: {
+      popup: "rounded-xl",
+    }
+  })
+
+  if (result.isConfirmed) {
 
     await signOut(auth)
 
+    Swal.fire({
+      title: "Logged out",
+      text: "You have been logged out successfully",
+      icon: "success",
+      background: "#0f172a",
+      color: "#ffffff",
+      confirmButtonColor: "#4f46e5"
+    })
+
   }
+
+}
+
 
   return (
 
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
+    <div className="min-h-screen flex justify-center items-center bg-slate-950 px-4">
 
-      <div className="bg-white shadow-lg rounded-xl p-8 w-[350px]">
+      <div className="bg-slate-900 border border-slate-800 shadow-xl rounded-2xl p-8 w-[380px]">
 
-        <h1 className="text-2xl font-bold mb-6 text-center">
+        <h1 className="text-2xl font-bold mb-6 text-center text-white">
           Your Account
         </h1>
+
+        {/* Avatar */}
+
         <div className="flex justify-center mb-6">
 
-            <div className="w-20 h-20 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl font-bold">
-
-                {initials}
-
-            </div>
+          <div className="w-20 h-20 rounded-full bg-indigo-600 text-white flex items-center justify-center text-2xl font-bold shadow-lg">
+            {initials}
+          </div>
 
         </div>
+
         {user ? (
 
-          <div className="space-y-4">
+          <div className="space-y-5">
 
-            <div>
-              <p className="text-gray-500 text-sm">Name</p>
-              <p className="font-semibold">{user.displayName}</p>
+            {/* Name */}
+
+            <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
+
+              <p className="text-gray-400 text-sm">
+                Name
+              </p>
+
+              <p className="font-semibold text-white">
+                {user.displayName}
+              </p>
+
             </div>
 
-            <div>
-              <p className="text-gray-500 text-sm">Email</p>
-              <p className="font-semibold">{user.email}</p>
+            {/* Email */}
+
+            <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
+
+              <p className="text-gray-400 text-sm">
+                Email
+              </p>
+
+              <p className="font-semibold text-white">
+                {user.email}
+              </p>
+
             </div>
+
+            {/* Logout */}
 
             <button
               onClick={handleLogout}
-              className="w-full bg-red-500 text-white py-2 rounded mt-4 cursor-pointer hover:bg-red-700 transition ease-in-out duration-150"
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg mt-4 transition"
             >
               Logout
             </button>
@@ -81,7 +139,7 @@ const UserPage = () => {
 
         ) : (
 
-          <p className="text-center text-gray-500">
+          <p className="text-center text-gray-400">
             No user logged in
           </p>
 
