@@ -1,68 +1,97 @@
 import { useEffect, useState } from "react"
-import { FaLocationDot, FaMagnifyingGlass, FaBars } from "react-icons/fa6"
-import {  FaShoppingCart } from "react-icons/fa"
+import { FaBars, FaMagnifyingGlass, FaCartShopping } from "react-icons/fa6"
+import { FaLocationDot } from "react-icons/fa6"
 import { NavLink } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
 import { setCategory, setSearchQuery } from "../Redux/slices/searchSlice"
-import type {RootState} from '../Redux/store'
+import type { RootState } from "../Redux/store"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { FaRegHeart } from "react-icons/fa";
 
 const Navbar = () => {
-const [name, setName] = useState("Sign In")
+
+const [name,setName] = useState("Sign In")
+const [open,setOpen] = useState(false)
 
 const auth = getAuth()
 
-useEffect(() => {
+useEffect(()=>{
 
-  const unsubscribe = onAuthStateChanged(auth, (user) => {
+const unsubscribe = onAuthStateChanged(auth,(user)=>{
 
-    if (user) {
-      console.log(user.displayName)
-      setName(user.displayName ?? "Sign In")
-    } else {
-      setName("Sign In")
-    }
+if(user){
+setName(user.displayName ?? "User")
+}else{
+setName("Sign In")
+}
 
-  })
+})
 
-  return () => unsubscribe()
+return ()=>unsubscribe()
 
-}, [])
-const [open,setOpen] = useState(false)
+},[])
+
 const dispatch = useDispatch()
-const searchQuery = useSelector((state:RootState) => state.search.query)
-const selectedCategory = useSelector((state:RootState) => state.search.category)
-const cart = useSelector((state:RootState) => state.cart.products)
+
+const searchQuery = useSelector((state:RootState)=>state.search.query)
+const selectedCategory = useSelector((state:RootState)=>state.search.category)
+const cart = useSelector((state:RootState)=>state.cart.products)
+const favorites = useSelector((state : RootState ) => state.favorites.favorites)
+const firstLetter = name !== "Sign In" ? name[0].toUpperCase() : "?"
+
 return (
 <>
-{/* TOP NAVBAR */}
+<header className="bg-[#0f172a]/95 backdrop-blur border-b border-slate-700 sticky top-0 z-50">
 
-<div className="bg-[#131921] text-white px-4 py-2">
+<div className="max-w-7xl mx-auto px-6">
+
+<div className="flex items-center justify-between h-16">
+
+{/* LEFT */}
 
 <div className="flex items-center gap-6">
 
-{/* logo */}
-<div className="text-2xl font-bold cursor-pointer">
-amazon
-</div>
+<button
+className="lg:hidden text-gray-300"
+onClick={()=>setOpen(!open)}
+>
+<FaBars size={20}/>
+</button>
 
-{/* location */}
-<div className="hidden md:flex items-center gap-1 text-sm cursor-pointer">
+<NavLink
+to="/"
+className="text-xl font-semibold text-white"
+>
+ShopSphere
+</NavLink>
+
+{/* LOCATION */}
+
+<div className="hidden md:flex items-center gap-2 text-gray-300 text-sm">
+
 <FaLocationDot />
-<div>
-<p className="text-gray-300 text-xs">Deliver To</p>
-<p className="font-semibold">Egypt</p>
-</div>
+
+<div className="leading-3">
+
+<p className="text-xs text-gray-400">Deliver To</p>
+<p>Egypt</p>
+
 </div>
 
-{/* search */}
-<div className="flex flex-1 max-w-[700px]">
+</div>
+
+</div>
+
+{/* SEARCH */}
+
+<div className="hidden md:flex items-center bg-slate-800 rounded-xl overflow-hidden w-[420px]">
 
 <select
 value={selectedCategory}
-onChange = {(e) => dispatch(setCategory(e.target.value))}
-className="bg-gray-200 max-w-[80px] text-black px-2 rounded-l-md hidden sm:block">
-  <option value="all">All</option>
+onChange={(e)=>dispatch(setCategory(e.target.value))}
+className="bg-slate-800 text-gray-300 text-sm px-3 outline-none"
+>
+<option value="all">All</option>
   <option value="beauty">beauty</option>
   <option value="fragrances">fragrances</option>
   <option value="furniture">furniture</option>
@@ -87,82 +116,148 @@ className="bg-gray-200 max-w-[80px] text-black px-2 rounded-l-md hidden sm:block
   <option value="womens-jewellery">womens-jewellery</option>
   <option value="womens-shoes">womens-shoes</option>
   <option value="womens-watches">womens-watches</option>
+
 </select>
 
 <input
 type="text"
 value={searchQuery}
-onChange = {(e) => dispatch(setSearchQuery(e.target.value))}
-placeholder="Search Amazon"
-className="w-full h-10 px-3 bg-white text-black outline-none"
+onChange={(e)=>dispatch(setSearchQuery(e.target.value))}
+placeholder="Search products..."
+className="flex-1 bg-slate-800 px-3 py-2 outline-none text-sm text-white"
 />
 
-<button className="bg-[#febd69] px-4 rounded-r-md">
-<FaMagnifyingGlass className="text-black"/>
+<button className="px-4 text-gray-300">
+<FaMagnifyingGlass/>
 </button>
 
 </div>
 
-{/* right side */}
-<div className="hidden lg:flex items-center gap-6 text-sm">
+{/* RIGHT */}
 
-<div>
+<div className="flex items-center gap-6">
+
+{/* ORDERS */}
+
+<div className="hidden md:block text-sm text-gray-300 leading-3">
+
+<p className="text-xs text-gray-400">Returns</p>
+<p>& Orders</p>
+
+</div>
+
+{/* FAVORITES */}
+<NavLink
+to="/favorites"
+className="relative text-gray-300 hover:text-white"
+>
+
+<FaRegHeart size={20}/>
+
+<span className="absolute -top-2 -right-3 bg-red-500 text-xs px-1.5 rounded-full">
+
+{favorites.length}
+
+</span>
+
+</NavLink>
+
+{/* CART */}
+
+<NavLink
+to="/cart"
+className="relative text-gray-300 hover:text-white"
+>
+
+<FaCartShopping size={20}/>
+
+<span className="absolute -top-2 -right-3 bg-red-500 text-xs px-1.5 rounded-full">
+
+{cart.length}
+
+</span>
+
+</NavLink>
+
+{/* USER */}
+
 <NavLink
 to={name === "Sign In" ? "/signin" : "/userinfo"}
-className="text-gray-300 text-xs"
+className="flex items-center text-white text-sm gap-2"
 >
-Hello, {name}
+<div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold text-sm">{firstLetter}</div>
+<div>{name}</div>
+
 </NavLink>
-<p className="font-semibold">Accounts & Lists</p>
-</div>
-
-<div>
-<p className="text-gray-300 text-xs">Returns</p>
-<p className="font-semibold">& Orders</p>
-</div>
-
-<div className="flex items-center gap-1 cursor-pointer">
-<FaShoppingCart size={22}/>
-<NavLink to={'/cart'} className="font-semibold">Cart</NavLink>
-</div>
-
-</div>
-
-{/* mobile menu button */}
-<button
-className="lg:hidden"
-onClick={()=>setOpen(!open)}
->
-<FaBars size={22}/>
-</button>
 
 </div>
 
 </div>
 
-{/* SECOND NAVBAR */}
-
-<div className="bg-[#232f3e] text-white px-4 py-2 hidden lg:flex gap-6 text-sm">
-
-<NavLink to={'/'} className="cursor-pointer">All</NavLink>
-<p className="cursor-pointer">Today's Deals</p>
-<p className="cursor-pointer">Customer Service</p>
-<p className="cursor-pointer">Gift Cards</p>
-<p className="cursor-pointer">Registry</p>
-<NavLink to={'/favorites'} className="cursor-pointer">Favorites</NavLink>
-
 </div>
+
+</header>
 
 {/* MOBILE MENU */}
 
 {open && (
-<div className="lg:hidden bg-[#232f3e] text-white px-4 py-4 space-y-3 flex flex-col gap-2">
-<NavLink to={'/signin'} className="text-gray-300 text-lg">Hello, {name}</NavLink>
-<NavLink to={'/'} className="cursor-pointer">All</NavLink>
-<NavLink to={'/cart'}><span className="w-5 h-5 rounded-full bg-red-500 p-2 ">{cart.length}</span> Cart</NavLink>
-<NavLink to={'/favorites'} className="cursor-pointer">Favorites</NavLink>
+
+<div className="lg:hidden bg-slate-900 border-t border-slate-700">
+
+<div className="p-5 space-y-4">
+
+{/* SEARCH */}
+
+<div className="flex bg-slate-800 rounded-lg overflow-hidden">
+
+<input
+type="text"
+value={searchQuery}
+onChange={(e)=>dispatch(setSearchQuery(e.target.value))}
+placeholder="Search..."
+className="flex-1 bg-slate-800 px-3 py-2 text-sm outline-none"
+/>
+
+<button className="px-4 text-gray-300">
+<FaMagnifyingGlass/>
+</button>
 
 </div>
+
+{/* LOCATION */}
+
+<div className="flex items-center gap-2 text-gray-300 text-sm">
+
+<FaLocationDot />
+<span>Deliver To Egypt</span>
+
+</div>
+
+<NavLink to="/favorites" className="block text-gray-300">
+Favorites
+</NavLink>
+
+<NavLink to="/cart" className="flex items-center gap-2 text-gray-300">
+
+Cart
+
+<span className="bg-red-500 text-xs px-2 rounded-full">
+{cart.length}
+</span>
+
+</NavLink>
+
+<NavLink
+to={name === "Sign In" ? "/signin" : "/userinfo"}
+className="block text-white"
+>
+{name}
+</NavLink>
+
+</div>
+
+</div>
+
 )}
 
 </>

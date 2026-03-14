@@ -43,63 +43,95 @@ const Products = () => {
       {filteredProducts.map(product => {
         const isFavorite = favorites.some((item) => item.id === product.id)
         return (
-                    <div key={product.id} className="bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div
+            key={product.id}
+            className="group bg-slate-900 rounded-2xl border border-slate-800 hover:border-slate-600 shadow-md hover:shadow-xl transition duration-300 overflow-hidden"
+            >
 
-            <div className="product-image">
-                <img 
-                src={product.thumbnail }
-                alt={product.title }
-                className="w-full h-48 object-cover"
-                />
-            </div>
+            {/* IMAGE */}
 
-            <div className="product-info p-4 space-y-2">
+            <div className="relative bg-slate-800 flex items-center justify-center h-56 overflow-hidden">
 
-                <div className="product-category text-xs font-semibold text-orange-500 uppercase tracking-wide">
-                    {product.category }
-                </div>
+            <img
+            src={product.thumbnail}
+            alt={product.title}
+            className="h-44 object-contain group-hover:scale-110 transition duration-500"
+            />
 
-                <h3 className="product-title text-lg font-semibold text-gray-800 dark:text-gray-100">
-                    {product.title }
-                </h3>
+            {/* FAVORITE BUTTON */}
 
-                <p className="product-description text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                    {product.description }
-                </p>
+            <button
+            onClick={() => dispatch(toggleFavorites({ ...product }))}
+            className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur border border-slate-700 transition
+            ${isFavorite ? "bg-red-500 text-white" : "bg-slate-800 text-gray-300 hover:bg-red-500 hover:text-white"}`}
+            >
+            <FaRegHeart />
+            </button>
 
-                <div className="product-rating flex items-center gap-2 text-yellow-500">
-                    <div className="stars"></div>
-                    <div className="rating-count text-gray-500 dark:text-gray-400 text-sm">
-                        {product.reviews.length > 0 ? (product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length).toFixed(1) : 'N/A'}
-                    </div>
-                </div>
+            {/* CATEGORY */}
 
-                <div className="product-price text-xl font-bold text-gray-900 dark:text-white">
-                    {product.price}
-                </div>
-
-                <div className="product-actions flex items-center gap-3 pt-2">
-
-                    <button 
-                    className="cursor-pointer add-to-cart flex-1 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium py-2 px-3 rounded-lg transition"
-                    onClick={() => {dispatch(addToCart({...product , quantity : 1}))}}
-                    >
-                        🛒 Add to Cart
-                    </button>
-
-                    <button 
-                    className={`cursor-pointer wishlist-btn p-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300  dark:hover:bg-red-900 dark:hover:text-red-400 transition 
-                        ${isFavorite ? "bg-red-500 text-white" : "bg-gray-200  hover:text-red-600"}`}
-                    onClick={() => {
-                        dispatch(toggleFavorites({...product}))
-                    }}>
-                        <FaRegHeart />
-                    </button>
-
-                </div>
+            <span className="absolute bottom-3 left-3 text-xs px-2 py-1 rounded-md bg-slate-700 text-gray-300 capitalize">
+            {product.category}
+            </span>
 
             </div>
-        </div>
+
+            {/* CONTENT */}
+
+            <div className="p-5 space-y-3">
+
+            <h3 className="text-lg font-semibold text-white line-clamp-1">
+            {product.title}
+            </h3>
+
+            <p className="text-sm text-gray-400 line-clamp-2">
+            {product.description}
+            </p>
+
+            {/* RATING */}
+
+            <div className="flex items-center gap-2 text-sm">
+
+            <span className="text-yellow-400">
+            {"★".repeat(Math.round(
+            product.reviews.length > 0
+            ? product.reviews.reduce((sum, r) => sum + r.rating, 0) /
+            product.reviews.length
+            : 0
+            ))}
+            </span>
+
+            <span className="text-gray-400">
+            {product.reviews.length > 0
+            ? (
+            product.reviews.reduce((sum, r) => sum + r.rating, 0) /
+            product.reviews.length
+            ).toFixed(1)
+            : "N/A"}
+            </span>
+
+            </div>
+
+            {/* PRICE + ACTION */}
+
+            <div className="flex items-center justify-between pt-3">
+
+            <span className="text-xl font-bold text-white">
+            ${product.price}
+            </span>
+
+            <button
+            onClick={() => dispatch(addToCart({ ...product, quantity: 1 }))}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-lg transition shadow"
+            >
+            Add to Cart
+            </button>
+
+            </div>
+
+            </div>
+
+            </div>        
         )
         })}
     </div>

@@ -89,7 +89,7 @@ const Footer = () => {
   return (
     <>
       {/* Sign In Section */}
-      <div className="bg-white flex flex-col items-center justify-center p-5">
+      <div className=" flex flex-col items-center justify-center p-5 text-white">
         <hr className="text-gray-400 w-full" />
 
         <div className="flex flex-col items-center justify-center p-5 gap-2">
@@ -97,7 +97,7 @@ const Footer = () => {
 
           <NavLink
             to={"/signin"}
-            className="cursor-pointer bg-amber-500 text-black font-semibold font-mono w-52 text-center rounded-2xl h-10 flex items-center justify-center"
+            className="cursor-pointer bg-amber-500 text-white font-semibold font-mono w-52 text-center rounded-2xl h-10 flex items-center justify-center"
           >
             Sign in
           </NavLink>
